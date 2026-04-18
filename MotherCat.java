@@ -8,20 +8,15 @@ public class MotherCat {
     }
 
     public String speak(int steps) {
-        if (steps <= 5) {
+        if (steps <= 8) {
             return "You are so fast!";
-        } else if (steps <= 10) {
+        } else if (steps <= 15) {
             return "I knew you would find me.";
         } else {
-            return "I miss you so much. Where have you been for so long?";
+            return "I miss you so much... where have you been for so long?";
         }
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+    public int getX() { return x; }
+    public int getY() { return y; }
 }
