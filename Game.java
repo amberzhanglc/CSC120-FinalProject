@@ -1,10 +1,26 @@
 import java.util.Scanner;
 
+/**
+ * Runs the main game loop for The Flow.
+ * This class creates the map, player, events, and handles player commands.
+ */
 public class Game {
+
+    /**
+     * Starts the game and repeatedly asks the player for commands until
+     * the player wins, loses, or quits.
+     *
+     * @param args command-line arguments, not used in this game
+     */
     public static void main(String[] args) {
         GameMap map = new GameMap(6, 6);
         Cat player = new Cat("Little Black Cat", 0, 5, 8);
         MotherCat mother = new MotherCat(5, 0);
+        
+        // Place flooded cells
+        map.setFlooded(3, 2);
+        map.setFlooded(3, 1);
+        map.setFlooded(4, 2);
 
         // Place events on the map
         map.placeEvent(1, 5, new Trap("A frightened bird swoops down and attacks you!"));
@@ -14,6 +30,10 @@ public class Game {
         map.placeEvent(3, 3, new Trap("A sharp branch scratches your paw."));
         map.placeEvent(4, 4, new Treat("A friendly animal lets you rest beside it."));
         map.placeEvent(0, 2, new Info("The scent of your mother feels stronger to the east."));
+        map.placeEvent(2, 2, new Info("The water looks dangerous ahead. Maybe you need something to float on."));
+        map.placeEvent(5, 4, new Trap("A sudden wave knocks you against a broken wall."));
+        map.placeEvent(5, 2, new Treat("You find a dry spot and recover some strength."));
+        map.placeEvent(4, 1, new Info("You can almost hear your mother now."));
 
         Scanner scanner = new Scanner(System.in);
         boolean playing = true;
@@ -34,6 +54,12 @@ public class Game {
                 System.out.println("  map                       - show the map");
                 System.out.println("  status                    - show your lives, steps, and items");
                 System.out.println("  quit                      - leave the game");
+                System.out.println();
+                System.out.println("Map symbols:");
+                System.out.println("  C  - you, the little cat");
+                System.out.println("  M  - your mother");
+                System.out.println("  ~  - flooded water");
+                System.out.println("  .  - normal area");
 
             } else if (command.equals("status")) {
                 System.out.println("Position: (" + player.getX() + ", " + player.getY() + ")");
@@ -42,10 +68,7 @@ public class Game {
                 System.out.println("Inventory: " + player.getInventoryString());
 
             } else if (command.equals("look")) {
-                Cell currentCell = map.getCell(player.getX(), player.getY());
-                if (currentCell != null) {
-                    System.out.println(currentCell.describe());
-                }
+                System.out.println(map.describeLocation(player.getX(), player.getY()));
 
             } else if (command.equals("map")) {
                 map.printMap(player, mother);
@@ -72,9 +95,7 @@ public class Game {
 
             // Win condition
             if (player.getX() == mother.getX() && player.getY() == mother.getY()) {
-                System.out.println("You found your mother!");
-                System.out.println(mother.speak(player.getSteps()));
-                System.out.println("You win!");
+                printEnding(player, mother);
                 playing = false;
             }
 
@@ -89,6 +110,17 @@ public class Game {
         scanner.close();
     }
 
+    /**
+     * Attempts to move the player in a chosen direction.
+     * The move is blocked if the destination is outside the map or if
+     * the destination is flooded and the player does not have the raft.
+     *
+     * @param player the player-controlled cat
+     * @param map the game map
+     * @param mother the mother cat
+     * @param dx the change in the x direction
+     * @param dy the change in the y direction
+     */
     public static void movePlayer(Cat player, GameMap map, MotherCat mother, int dx, int dy) {
         int newX = player.getX() + dx;
         int newY = player.getY() + dy;
@@ -98,18 +130,35 @@ public class Game {
             return;
         }
 
-        // Restricted access: need raft to cross this flooded cell
-        if (newX == 3 && newY == 2 && !player.hasItem("raft")) {
+        // Restricted access: need raft to cross flooded cells
+        if (map.isFlooded(newX, newY) && !player.hasItem("raft")) {
             System.out.println("The floodwater is too deep here. You need a raft to cross.");
             return;
         }
 
         player.move(dx, dy);
         System.out.println("You moved to (" + player.getX() + ", " + player.getY() + ").");
+        System.out.println(map.describeLocation(player.getX(), player.getY()));
+    }
 
-        Cell currentCell = map.getCell(player.getX(), player.getY());
-        if (currentCell != null) {
-            System.out.println(currentCell.triggerEvent(player, mother));
+    /**
+     * Prints the ending message based on the player's steps and remaining lives.
+     *
+     * @param player the player-controlled cat
+     * @param mother the mother cat
+     */
+    public static void printEnding(Cat player, MotherCat mother) {
+        System.out.println("You found your mother!");
+        System.out.println(mother.speak(player.getSteps()));
+        
+        if (player.getSteps() <= 12) {
+            System.out.println("Best Ending: You found your mother quickly and safely.");
+        } else if (player.getLives() <= 3) {
+            System.out.println("Survival Ending: You barely made it through the flood, but you are finally safe.");
+        } else {
+            System.out.println("Safe Ending: After a long journey, you finally reunited with your mother.");
         }
+
+        System.out.println("You win!");
     }
 }
