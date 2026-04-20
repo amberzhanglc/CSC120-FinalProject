@@ -11,7 +11,7 @@ public class Trap extends Event {
      */
     public Trap(String message) {
         super(message);
-        this.damage = 1;
+        this.damage = 2;
     }
 
     /**
@@ -23,6 +23,6 @@ public class Trap extends Event {
      */
     public String applyEffect(Cat cat, MotherCat mother) {
         cat.loseLife(damage);
-        return message + " (-" + damage + " life)";
+        return message + " (-" + damage + " lives)";
     }
 }

@@ -7,9 +7,10 @@
 - `south`: move down
 - `east`: move right
 - `west`: move left
-- `look`: describes the current location
-- `map`: shows the game map
+- `look`: describes the current location without triggering a new event
+- `map`: shows the current game map
 - `status`: shows current position, lives, steps, and inventory
+- `restart`: restarts the game from the beginning
 - `quit`: exits the game
 
 ## Goal
@@ -30,7 +31,9 @@ The game uses a 6 by 6 grid.
 - Player starts at `(0, 5)`
 - MotherCat is at `(5, 0)`
 
-### Flooded Cells
+After each successful move, the updated map is automatically printed so the player can see their current location.
+
+## Flooded Cells
 
 These cells require the raft before the player can enter them:
 
@@ -38,7 +41,9 @@ These cells require the raft before the player can enter them:
 - `(3, 2)`
 - `(4, 2)`
 
-### Event Locations
+If the player tries to enter one of these cells without the raft, the move is blocked.
+
+## Event Locations
 
 - Trap at `(1, 5)`: a frightened bird attacks the player
 - Treat at `(2, 4)`: the player finds a fish
@@ -52,9 +57,28 @@ These cells require the raft before the player can enter them:
 - Treat at `(5, 2)`: the player finds a dry spot and recovers strength
 - Info clue at `(4, 1)`: the player can almost hear the mother
 
+## Event Effects
+
+Events are triggered when the player moves onto a cell that contains an unused event.
+
+- Trap events remove 2 lives
+- Treat events add 2 lives
+- Info events give clues without changing lives
+- Item events add useful items to the player's inventory
+- The raft allows the player to cross flooded cells
+
+The `look` command only describes the current location. It does not trigger a new event by itself.
+
 ## Challenges
 
-The player must survive traps, use clues to move through the map, and find the raft before crossing flooded cells. The player wins by reaching the mother cat at `(5, 0)`. The player loses if their lives reach 0.
+The player must survive traps, use clues to move through the map, and find the raft before crossing flooded cells. Some routes are blocked until the player has the raft. The player wins by reaching the mother cat at `(5, 0)`. The player loses if their lives reach 0.
+
+## Restarting the Game
+
+The player can restart in two ways:
+
+- Type `restart` during the game
+- After winning or losing, type `yes` or `y` when asked whether to play again
 
 ## Endings
 

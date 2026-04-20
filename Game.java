@@ -7,40 +7,42 @@ import java.util.Scanner;
 public class Game {
 
     /**
-     * Starts the game and repeatedly asks the player for commands until
-     * the player wins, loses, or quits.
+     * Starts the game and allows the player to restart after winning or losing.
      *
      * @param args command-line arguments, not used in this game
      */
     public static void main(String[] args) {
-        GameMap map = new GameMap(6, 6);
+        Scanner scanner = new Scanner(System.in);
+        boolean playAgain = true;
+
+        while (playAgain) {
+            playAgain = playOneGame(scanner);
+        }
+
+        scanner.close();
+    }
+
+    /**
+     * Runs one full round of the game.
+     *
+     * @param scanner the scanner used to read player commands
+     * @return true if the player wants to restart, false otherwise
+     */
+    public static boolean playOneGame(Scanner scanner) {
+        GameMap map = createMap();
         Cat player = new Cat("Little Black Cat", 0, 5, 8);
         MotherCat mother = new MotherCat(5, 0);
-        
-        // Place flooded cells
-        map.setFlooded(3, 2);
-        map.setFlooded(3, 1);
-        map.setFlooded(4, 2);
 
-        // Place events on the map
-        map.placeEvent(1, 5, new Trap("A frightened bird swoops down and attacks you!"));
-        map.placeEvent(2, 4, new Treat("You found a fish under a floating plank. Yum yum!"));
-        map.placeEvent(1, 1, new Info("You hear a faint meow from the northeast."));
-        map.placeEvent(4, 5, new ItemEvent("raft", "You found a small wooden raft!"));
-        map.placeEvent(3, 3, new Trap("A sharp branch scratches your paw."));
-        map.placeEvent(4, 4, new Treat("A friendly animal lets you rest beside it."));
-        map.placeEvent(0, 2, new Info("The scent of your mother feels stronger to the east."));
-        map.placeEvent(2, 2, new Info("The water looks dangerous ahead. Maybe you need something to float on."));
-        map.placeEvent(5, 4, new Trap("A sudden wave knocks you against a broken wall."));
-        map.placeEvent(5, 2, new Treat("You find a dry spot and recover some strength."));
-        map.placeEvent(4, 1, new Info("You can almost hear your mother now."));
+        placeEvents(map);
 
-        Scanner scanner = new Scanner(System.in);
         boolean playing = true;
 
         System.out.println("Welcome to The Flow!");
         System.out.println("You are a little black cat trying to find your mother after a flood.");
         System.out.println("Type help to see available commands.");
+        System.out.println();
+        System.out.println("Current map:");
+        map.printMap(player, mother);
 
         while (playing) {
             System.out.println();
@@ -53,6 +55,7 @@ public class Game {
                 System.out.println("  look                      - describe your current location");
                 System.out.println("  map                       - show the map");
                 System.out.println("  status                    - show your lives, steps, and items");
+                System.out.println("  restart                   - restart the game");
                 System.out.println("  quit                      - leave the game");
                 System.out.println();
                 System.out.println("Map symbols:");
@@ -85,9 +88,13 @@ public class Game {
             } else if (command.equals("west")) {
                 movePlayer(player, map, mother, -1, 0);
 
+            } else if (command.equals("restart")) {
+                System.out.println("Restarting the game...");
+                return true;
+
             } else if (command.equals("quit")) {
                 System.out.println("Goodbye!");
-                playing = false;
+                return false;
 
             } else {
                 System.out.println("Invalid command. Type help to see available commands.");
@@ -96,18 +103,53 @@ public class Game {
             // Win condition
             if (player.getX() == mother.getX() && player.getY() == mother.getY()) {
                 printEnding(player, mother);
-                playing = false;
+                return askPlayAgain(scanner);
             }
 
             // Lose condition
             if (player.getLives() <= 0) {
                 System.out.println("You lost all your lives.");
                 System.out.println("Game over.");
-                playing = false;
+                return askPlayAgain(scanner);
             }
         }
 
-        scanner.close();
+        return false;
+    }
+
+    /**
+     * Creates the game map and marks flooded cells.
+     *
+     * @return the initialized game map
+     */
+    public static GameMap createMap() {
+        GameMap map = new GameMap(6, 6);
+
+        // Place flooded cells
+        map.setFlooded(3, 2);
+        map.setFlooded(3, 1);
+        map.setFlooded(4, 2);
+
+        return map;
+    }
+
+    /**
+     * Places all events on the game map.
+     *
+     * @param map the game map
+     */
+    public static void placeEvents(GameMap map) {
+        map.placeEvent(1, 5, new Trap("A frightened bird swoops down and attacks you!"));
+        map.placeEvent(2, 4, new Treat("You found a fish under a floating plank. Yum yum!"));
+        map.placeEvent(1, 1, new Info("You hear a faint meow from the northeast."));
+        map.placeEvent(4, 5, new ItemEvent("raft", "You found a small wooden raft!"));
+        map.placeEvent(3, 3, new Trap("A sharp branch scratches your paw."));
+        map.placeEvent(4, 4, new Treat("A friendly animal lets you rest beside it."));
+        map.placeEvent(0, 2, new Info("The scent of your mother feels stronger to the east."));
+        map.placeEvent(2, 2, new Info("The water looks dangerous ahead. Maybe you need something to float on."));
+        map.placeEvent(5, 4, new Trap("A sudden wave knocks you against a broken wall."));
+        map.placeEvent(5, 2, new Treat("You find a dry spot and recover some strength."));
+        map.placeEvent(4, 1, new Info("You can almost hear your mother now."));
     }
 
     /**
@@ -138,7 +180,15 @@ public class Game {
 
         player.move(dx, dy);
         System.out.println("You moved to (" + player.getX() + ", " + player.getY() + ").");
-        System.out.println(map.describeLocation(player.getX(), player.getY()));
+
+        Cell currentCell = map.getCell(player.getX(), player.getY());
+        if (currentCell != null) {
+            System.out.println(currentCell.triggerEvent(player, mother));
+        }
+
+        System.out.println();
+        System.out.println("Current map:");
+        map.printMap(player, mother);
     }
 
     /**
@@ -160,5 +210,19 @@ public class Game {
         }
 
         System.out.println("You win!");
+    }
+
+    /**
+     * Asks the player whether they want to play again.
+     *
+     * @param scanner the scanner used to read input
+     * @return true if the player wants to play again, false otherwise
+     */
+    public static boolean askPlayAgain(Scanner scanner) {
+        System.out.println();
+        System.out.print("Play again? Type yes or no: ");
+        String answer = scanner.nextLine().trim().toLowerCase();
+
+        return answer.equals("yes") || answer.equals("y");
     }
 }
