@@ -90,8 +90,8 @@ public class GameMap {
     }
 
     /**
-     * Prints the map using symbols for the player, mother cat, flooded cells,
-     * and normal cells.
+     * Prints the map using symbols for the player, flooded cells,
+     * and normal cells. The mother cat is hidden from the map.
      *
      * @param player the player-controlled cat
      * @param mother the mother cat
@@ -101,8 +101,6 @@ public class GameMap {
             for (int x = 0; x < cols; x++) {
                 if (player.getX() == x && player.getY() == y) {
                     System.out.print(" C ");
-                } else if (mother.getX() == x && mother.getY() == y) {
-                    System.out.print(" M ");
                 } else if (flooded[y][x]) {
                     System.out.print(" ~ ");
                 } else {
