@@ -41,7 +41,7 @@ public class Game {
         System.out.println("You are a little black cat trying to find your mother after a flood.");
         System.out.println("Your mother is hidden on the map, somewhere across the flooded river.");
         System.out.println("You may need to find something useful before you can cross the water.");
-        System.out.println("Type help to see available commands.");
+        System.out.println("Type HELP to see available commands.");
         System.out.println();
 
         printQuickStatus(player);
@@ -78,15 +78,15 @@ public class Game {
                 movePlayer(player, map, mother, -1, 0);
 
             } else if (command.equals("restart")) {
-                System.out.println("Restarting the game...");
+                System.out.println("RESTARTING the game...");
                 return true;
 
-            } else if (command.equals("end") || command.equals("quit")) {
-                System.out.println("Ending the game. Goodbye!");
+            } else if (command.equals("end")) {
+                System.out.println("ENDING the game. Goodbye!");
                 return false;
 
             } else {
-                System.out.println("Invalid command. Type help to see available commands.");
+                System.out.println("Invalid command. Type HELP to see available commands.");
             }
 
             if (player.getX() == mother.getX() && player.getY() == mother.getY()) {
@@ -191,14 +191,15 @@ public class Game {
      * Prints all available commands and map symbols.
      */
     public static void printHelp() {
-        System.out.println("Available commands:");
-        System.out.println("  north, south, east, west  - move");
-        System.out.println("  look                      - describe your current location");
-        System.out.println("  map                       - show the map");
-        System.out.println("  status                    - show your lives, steps, and items");
-        System.out.println("  restart                   - restart the game");
-        System.out.println("  end                       - end the game");
-        System.out.println("  quit                      - end the game");
+        System.out.println("Main commands:");
+        System.out.println("  NORTH, SOUTH, EAST, WEST  - move around the map");
+        System.out.println("  LOOK                      - describe your current location");
+        System.out.println("  RESTART                   - restart the game");
+        System.out.println("  END                       - end the game");
+        System.out.println();
+        System.out.println("Optional check commands:");
+        System.out.println("  MAP                       - show the map again");
+        System.out.println("  STATUS                    - show full position, lives, steps, and inventory");
         System.out.println();
         System.out.println("Map symbols:");
         System.out.println("  C  - you, the little cat");
@@ -206,7 +207,7 @@ public class Game {
         System.out.println("  .  - normal area");
         System.out.println();
         System.out.println("Your mother is hidden on the map, somewhere across the flooded river.");
-        System.out.println("If you cannot cross the river, look for something useful on your side first.");
+        System.out.println("The map and quick status update automatically after every successful move.");
         System.out.println("Hidden events are not shown on the map. Move carefully.");
     }
 
@@ -340,17 +341,17 @@ public class Game {
     public static boolean askRestartOrEnd(Scanner scanner) {
         while (true) {
             System.out.println();
-            System.out.print("Type restart to play again, or type end to finish: ");
+            System.out.print("Type RESTART to play again, or type END to finish: ");
             String answer = scanner.nextLine().trim().toLowerCase();
 
             if (answer.equals("restart")) {
-                System.out.println("Restarting the game...");
+                System.out.println("RESTARTING the game...");
                 return true;
-            } else if (answer.equals("end") || answer.equals("quit")) {
-                System.out.println("Ending the game. Goodbye!");
+            } else if (answer.equals("end")) {
+                System.out.println("ENDING the game. Goodbye!");
                 return false;
             } else {
-                System.out.println("Invalid choice. Please type restart or end.");
+                System.out.println("Invalid choice. Please type RESTART or END.");
             }
         }
     }
