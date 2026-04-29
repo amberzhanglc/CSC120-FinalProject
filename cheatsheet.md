@@ -1,10 +1,11 @@
 # Cheatsheet
 
-## Commands
+## Interface
 
-The game accepts commands in either uppercase or lowercase, but the official command names are written in uppercase.
+This version of the game uses a graphical Swing interface.
+The player controls the cat by clicking on-screen buttons instead of typing commands in the terminal.
 
-### Main Commands
+## Buttons
 
 - `NORTH`: move up
 - `SOUTH`: move down
@@ -14,28 +15,17 @@ The game accepts commands in either uppercase or lowercase, but the official com
 - `RESTART`: restarts the game from the beginning
 - `END`: exits the game
 
-### Optional Check Commands
-
-These commands are still available, but the map and quick status are already shown automatically after each successful move.
-
-- `MAP`: shows the current game map again
-- `STATUS`: shows full current position, lives, steps, and inventory
-- `HELP`: shows all available commands and explains the map symbols
-- `QUIT`: also exits the game
-
 ## Goal
 
 You are a little black cat separated from your mother after a flood. Your goal is to travel across the map, survive dangerous places, find the raft, cross the flooded river, and reach your mother before losing all your lives.
 
-Your mother is hidden on the map, somewhere across the flooded river. Use clues to figure out where to go.
+Your mother is hidden on the map, somewhere to the northeast, across the flooded river.
 
 ## Map Symbols
 
-- `C`: you, the little cat
-- `~`: flooded water
-- `.`: normal area
-
-The mother cat is not shown on the map.
+- `🐈‍` : you, the little cat
+- `🌊` : flooded water
+- `❔` : regular land tile
 
 ## Map Layout
 
@@ -46,7 +36,7 @@ The game uses an 8 by 8 grid.
 - The flooded river is the full column where `x = 4`
 - The raft is at `(2, 6)`
 
-After each successful move, the updated map is automatically printed so the player can see their current location.
+After each successful move, the map in the game window updates automatically so the player can see the current location.
 
 ## Flooded River
 
@@ -64,7 +54,7 @@ Events are hidden on the map and are triggered when the player moves onto a cell
 - Item events add useful items to the player's inventory
 - The raft allows the player to cross flooded cells
 
-The `LOOK` command only describes the current location. It does not trigger a new event by itself.
+The `LOOK` button only describes the current location. It does not trigger a new event by itself.
 
 ## Important Event Locations
 
@@ -130,12 +120,11 @@ The player loses if their lives reach 0.
 
 ## Restarting or Ending the Game
 
-The player can restart or end the game in two ways:
+The player can restart or end the game using the on-screen buttons.
 
-- During the game, type `RESTART` to restart
-- During the game, type `END` or `QUIT` to exit
-- After winning or losing, type `RESTART` to play again
-- After winning or losing, type `END` to finish
+- Click `RESTART` during the game to restart
+- Click `END` during the game to exit
+- After winning or losing, choose `RESTART` or `END` in the pop-up dialog
 
 ## Endings
 
